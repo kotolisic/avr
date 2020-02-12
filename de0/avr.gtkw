@@ -1,0 +1,149 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Sat Dec 21 07:43:53 2019
+[*]
+[dumpfile] "/disk/dev/avrmachine/de0/avr.vcd"
+[dumpfile_mtime] "Sat Dec 21 07:42:52 2019"
+[dumpfile_size] 81306
+[savefile] "/disk/dev/avrmachine/de0/avr.gtkw"
+[timestart] 0
+[size] 1920 1029
+[pos] -1 -1
+*-7.000000 111 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] avr.
+[sst_width] 248
+[signals_width] 200
+[sst_expanded] 1
+[sst_vpaned_height] 317
+@28
+[color] 3
+avr.clock
+[color] 3
+avr.clk50
+[color] 2
+avr.UnitAVRCPU.clock
+[color] 2
+avr.UnitAVRCPU.locked
+avr.UnitAVRCPU.tstate[1:0]
+@22
+avr.UnitAVRCPU.pc[15:0]
+avr.UnitAVRCPU.opcode[15:0]
+@28
+avr.UnitAVRCPU.reg_w
+avr.UnitAVRCPU.sreg_w
+avr.UnitAVRCPU.reg_ws
+avr.UnitAVRCPU.reg_ww
+@22
+avr.UnitAVRCPU.reg_id[4:0]
+@28
+avr.UnitAVRCPU.reg_idw[1:0]
+@c00200
+-DEBUG
+@22
+[color] 6
+avr.UnitAVRCPU._r1[7:0]
+[color] 6
+avr.UnitAVRCPU._r2[7:0]
+[color] 6
+avr.UnitAVRCPU._r3[7:0]
+[color] 7
+avr.UnitAVRCPU._r4[7:0]
+[color] 7
+avr.UnitAVRCPU.X[15:0]
+[color] 7
+avr.UnitAVRCPU.Y[15:0]
+[color] 7
+avr.UnitAVRCPU.Z[15:0]
+[color] 7
+avr.UnitAVRCPU.rd[4:0]
+[color] 7
+avr.UnitAVRCPU.rr[4:0]
+@1401200
+-DEBUG
+@c00200
+-ALU
+@22
+[color] 7
+avr.UnitAVRCPU.alu[4:0]
+[color] 7
+avr.UnitAVRCPU.alu_res[7:0]
+[color] 7
+avr.UnitAVRCPU.alu_sreg[7:0]
+[color] 7
+avr.UnitAVRCPU.sreg[7:0]
+[color] 7
+avr.UnitAVRCPU.op1[7:0]
+[color] 7
+avr.UnitAVRCPU.op2[7:0]
+[color] 7
+avr.UnitAVRCPU.op1w[15:0]
+@1401200
+-ALU
+@800200
+-MemCTRL
+@22
+[color] 5
+avr.UnitAVRCPU.sp[15:0]
+@28
+[color] 5
+avr.UnitAVRCPU.sp_mth[1:0]
+@22
+[color] 5
+avr.UnitAVRCPU.address[15:0]
+[color] 5
+avr.UnitAVRCPU.din[7:0]
+[color] 5
+avr.UnitAVRCPU.wb[7:0]
+@28
+[color] 5
+avr.UnitAVRCPU.w
+@1000200
+-MemCTRL
+@800200
+-SPI
+@28
+[color] 6
+avr.UnitSPI.spi_latch[1:0]
+[color] 6
+avr.UnitSPI.spi_process[2:0]
+[color] 6
+avr.UnitAVRCPU.spi_cmd[1:0]
+@22
+[color] 6
+avr.UnitAVRCPU.spi_din[7:0]
+[color] 6
+avr.UnitAVRCPU.spi_out[7:0]
+@28
+[color] 3
+avr.UnitAVRCPU.spi_sent
+@29
+[color] 3
+avr.UnitAVRCPU.spi_proc
+@28
+[color] 6
+avr.UnitAVRCPU.spi_st[1:0]
+@22
+[color] 6
+avr.UnitSPI.spi_out[7:0]
+[color] 6
+avr.UnitSPI.spi_din[7:0]
+[color] 6
+avr.UnitSPI.spi_data_w[7:0]
+[color] 5
+avr.UnitSPI.spi_cycle[3:0]
+@800200
+-SPIExt
+@28
+[color] 2
+avr.UnitSPI.spi_sclk
+[color] 2
+avr.UnitSPI.spi_cs
+[color] 2
+avr.UnitSPI.spi_mosi
+[color] 2
+avr.UnitSPI.spi_miso
+@1000200
+-SPIExt
+-SPI
+[pattern_trace] 1
+[pattern_trace] 0
