@@ -10,7 +10,7 @@ all:
 	php ../../hexer.php main.bin > ../../avr.hex
 	php ../../mifer.php main.bin > ../../flash.mif
 	cd ../.. && make
-	./../../../av2/avr main.bin
+	./../../../av/avr main.bin
 
 clean:
 	rm *.o rm *.elf *.lst
