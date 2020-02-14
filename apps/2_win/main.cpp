@@ -6,6 +6,27 @@
 
 #include "gui.c"
 
+class test {
+
+protected:
+    int h1, h2;
+
+public:
+
+    void hello() {
+        
+        // Создать окно
+        int h1 = create_window(10, 10, 128, 128, "Demoscene");
+        int h2 = create_window(100, 30, 128, 128, "Tiny Windows");
+
+        // -- Это уже само окно должно делать
+        gui_window_paint(h1); // gui_block(hwnd, 0, 0, 256, 128, 0);
+        gui_window_paint(h2); // gui_block(hwnd, 0, 0, 256, 128, 0);
+
+    }
+
+};
+
 int main() {
 
     screen3(1);
@@ -14,13 +35,8 @@ int main() {
     gui_init();
     start_panel();
 
-    // Создать окно
-    int h1 = create_window(10, 10, 128, 128, "Demoscene");
-    int h2 = create_window(100, 30, 128, 128, "Tiny Windows");
-
-    // -- Это уже само окно должно делать
-    gui_window_paint(h1); // gui_block(hwnd, 0, 0, 256, 128, 0);
-    gui_window_paint(h2); // gui_block(hwnd, 0, 0, 256, 128, 0);
+    test ab;
+    ab.hello();
 
     char pmstat = 0, cmstat = 0;
 

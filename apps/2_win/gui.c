@@ -148,7 +148,7 @@ void gui_block(int hwnd, int x1, int y1, int x2, int y2, char cl) {
 // ---------------------------------------------------------------------
 
 // Не передается `title`, он потом рисуется отдельно
-int create_window(int x, int y, int w, int h, char* name) {
+int create_window(int x, int y, int w, int h, const char* name) {
 
     for (int i = 0; i < MAX_WINDOWS; i++) {
 
@@ -166,7 +166,7 @@ int create_window(int x, int y, int w, int h, char* name) {
         windows[i].y = y;
         windows[i].w = w + 6;
         windows[i].h = h + 18;
-        windows[i].name = name;
+        windows[i].name = (char*)name;
 
         // Последнее активное окно
         window_hwnd_active = hwnd_id;
