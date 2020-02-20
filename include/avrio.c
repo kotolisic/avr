@@ -31,7 +31,7 @@ enum PortsID {
     TIMER_HI        = 0x07, // R
     TIMER_HI2       = 0x0F, // R
     TIMER_HI3       = 0x10, // R
-    
+
     SPI_DATA        = 0x08, // W
     SPI_CMD         = 0x09, // W
     SPI_STATUS      = 0x09, // R
@@ -53,6 +53,14 @@ enum VideoModes {
     VM_320x200x4    = 3
 };
 
+enum SPI_Commands {
+
+    SPI_CMD_INIT    = 0,
+    SPI_CMD_SEND    = 1,
+    SPI_CMD_CE0     = 2,
+    SPI_CMD_CE1     = 3
+};
+
 // Значение таймера [15:0] или [31:0]
 #define TIMERW ((word) inp(TIMER_LO) + ((word) inp(TIMER_HI)<<8))
 #define TIMERD ((dword)inp(TIMER_LO) + ((dword)inp(TIMER_HI)<<8) + ((dword)inp(TIMER_HI2)<<16))
@@ -71,5 +79,20 @@ inline void outp(int port, unsigned char val) {
 inline int get_mouse_x()    { return inp(0xA) | (inp(0xE) << 8); }
 inline int get_mouse_y()    { return inp(0xB); }
 inline int get_mouse_st()   { return inp(0xC); }
+
+// Принять байт SPI
+inline byte SPI_get() {
+
+    outp(SPI_DATA, 0xFF);
+    outp(SPI_CMD,  SPI_CMD_SEND);
+    return inp(SPI_DATA);
+}
+
+// Отправить байт SPI
+inline void SPI_put(byte data) {
+
+    outp(SPI_DATA, data);
+    outp(SPI_CMD,  SPI_CMD_SEND);
+}
 
 #endif
