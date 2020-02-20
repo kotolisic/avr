@@ -120,7 +120,7 @@ protected:
     int  text_px, text_py;
     int  cursor_x, cursor_y, flash, flash_id, require_disp_update;
     int  mouse_x, mouse_y, mouse_cmd;
-    int  timer;
+    unsigned long timer;
 
     // Информация о SPI
     unsigned char spi_data;

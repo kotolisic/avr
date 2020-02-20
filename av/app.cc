@@ -347,7 +347,7 @@ void APP::infinite() {
                 // Вызывается по таймеру
                 case SDL_USEREVENT: {
 
-                    timer = (timer + 20) & 0xffff;
+                    timer = (timer + 20);
                     require_disp_update = 0;
 
                     flash_id++;

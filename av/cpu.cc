@@ -28,6 +28,7 @@ unsigned char APP::get(int addr) {
         // Таймер
         case 0x26: dv = timer & 0xff; break;
         case 0x27: dv = (timer >> 8) & 0xff; break;
+        case 0x2F: dv = (timer >> 16) & 0xff; break;
 
         // SPI
         case 0x28: dv = spi_read_data(); break;

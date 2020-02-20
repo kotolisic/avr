@@ -97,7 +97,8 @@ always @* begin
         // Таймер
         16'h0026: din = timer_ms[ 7:0];
         16'h0027: din = timer_ms[15:8];
-        
+        16'h002F: din = timer_ms[23:16];
+
         // SPI
         16'h0028: din = spi_din;
         16'h0029: din = spi_st;
@@ -175,8 +176,8 @@ wire [15:0] pcnext2 = pc + 2;
 wire        is_call = {opcode[14], opcode[3:1]} == 4'b0111;
 
 // Текущий статус
-assign kb_hit      = kb_trigger ^ kb_tr;
-reg    kb_trigger  = 1'b0;
+assign      kb_hit      = kb_trigger ^ kb_tr;
+reg         kb_trigger  = 1'b0;
 
 // Арифметико-логическое устройство
 reg  [ 7:0] op1;
@@ -196,7 +197,7 @@ alu UnitALU
 
 // Таймер
 reg [14:0] timer_divider = 0;
-reg [15:0] timer_ms      = 0;
+reg [23:0] timer_ms      = 0;
 
 // Отсчет таймера в миллисекундах
 always @(posedge clock) begin
@@ -209,7 +210,8 @@ always @(posedge clock) begin
 end
 
 // Исполнительное устройство
-always @(posedge clock) if (!locked) begin
+always @(posedge clock)
+if (!locked) begin
 
     w      <= 1'b0;
     aread  <= 1'b0;

@@ -4,7 +4,7 @@ class TextMode {
 
 protected:
 
-    byte cursor_x, cursor_y, cursor_cl;
+    byte cursor_x, cursor_y, cursor_cl, cursor_show;
 
 public:
 
@@ -12,10 +12,12 @@ public:
     TextMode() { }
 
     // Запуск текстового режима
-    void start() {
+    TextMode* start() {
 
+        cursor_show = 1;
         outp(VIDEOMODE, VM_80x25);
         cursor(0, 0);
+        return this;
     }
 
     // Установка текстового курсора в нужную позицию
@@ -24,9 +26,27 @@ public:
         cursor_x = x;
         cursor_y = y;
 
-        outp(CURSOR_X, x);
-        outp(CURSOR_Y, y);
+        if (cursor_show) {
+            outp(CURSOR_X, x);
+            outp(CURSOR_Y, y);
+        }
 
+        return this;
+    }
+
+    // Скрыть курсор
+    TextMode* hide() {
+
+        cursor_show = 0;
+        outp(CURSOR_Y, 25);
+        return this;
+    }
+
+    // Показать курсор
+    TextMode* show() {
+
+        cursor_show = 1;
+        cursor(cursor_x, cursor_y);
         return this;
     }
 
@@ -111,6 +131,39 @@ public:
         return i;
     }
 
+    // Печать UTF8-строки русской
+    int printutf8(const char* s) {
+
+        int  i = 0, cnt = 0;
+        byte ch;
+
+        while ( (ch = s[i]) ) {
+
+            // Прописные русские буквы 
+            if (ch == 0xD0) {
+                            
+                ch = s[++i];
+
+                if (ch == 0x01) ch = 0xA5;
+                else if (ch >= 0x90 && ch < 0xC0) ch -= 0x10;
+                else if (ch >= 0xB0 && ch < 0xC0) ch -= 0x10;
+            }
+            // Строчные русские буквы
+            else if (ch == 0xD1) {
+
+                ch = s[++i];
+
+                if (ch == 0x91) ch = 0x85;
+                else if (ch >= 0x80) ch += 0x60;
+            }
+
+            printch(ch);
+            i++; cnt++;
+        }
+
+        return cnt;
+    }
+
     // Печать с переносом строки на новую
     TextMode* println(const char *s) {
 
@@ -123,7 +176,7 @@ public:
     TextMode* palette(byte id, byte r, byte g, byte b) {
 
         heap(vm, 0xFFA0);
-        
+
         vm[2*id + 0] = (b >> 4) | (g & 0xF0);
         vm[2*id + 1] = (r >> 4);
 
@@ -150,7 +203,7 @@ public:
             printc(x1, y1, 0xDA); printc(x2, y1, 0xBF);
             printc(x1, y2, 0xC0); printc(x2, y2, 0xD9);
         }
-        
+
         return this;
     }
 
@@ -169,7 +222,7 @@ public:
     // Печать числа -2147483647 .. 2147483647
     byte printint(long v) {
 
-        char s[16];
+        char s[24];
         int  q, i = 0, cnt = 0;
 
         // Печать символа минус перед числом
@@ -194,7 +247,7 @@ public:
             unsigned char m = (v >> (sh - 4*i)) & 0x0F;
             printch(m < 10 ? '0' + m : '7' + m);
         }
-        
+
         return this;
     }
 

@@ -29,6 +29,8 @@ enum PortsID {
 
     TIMER_LO        = 0x06, // R
     TIMER_HI        = 0x07, // R
+    TIMER_HI2       = 0x0F, // R
+    TIMER_HI3       = 0x10, // R
     
     SPI_DATA        = 0x08, // W
     SPI_CMD         = 0x09, // W
@@ -51,12 +53,13 @@ enum VideoModes {
     VM_320x200x4    = 3
 };
 
-// Значение таймера [15:0]
-#define TIMERW (inp(TIMER_LO) + (inp(TIMER_HI)<<8));
+// Значение таймера [15:0] или [31:0]
+#define TIMERW ((word) inp(TIMER_LO) + ((word) inp(TIMER_HI)<<8))
+#define TIMERD ((dword)inp(TIMER_LO) + ((dword)inp(TIMER_HI)<<8) + ((dword)inp(TIMER_HI2)<<16))
 
 // Чтение из порта
-inline unsigned char inp(int port) {
-    return ((volatile unsigned char*)0x20)[port];
+inline byte inp(int port) {
+    return ((volatile byte*)0x20)[port];
 }
 
 // Запись в порт
