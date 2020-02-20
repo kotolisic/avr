@@ -51,6 +51,9 @@ enum VideoModes {
     VM_320x200x4    = 3
 };
 
+// Значение таймера [15:0]
+#define TIMERW (inp(TIMER_LO) + (inp(TIMER_HI)<<8));
+
 // Чтение из порта
 inline unsigned char inp(int port) {
     return ((volatile unsigned char*)0x20)[port];
