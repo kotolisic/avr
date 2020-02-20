@@ -1,22 +1,69 @@
+#ifndef __AVRIO_HFILE
+#define __AVRIO_HFILE
+
 // Ссылка на пустой адрес
 #define NULL    ((void*)0)
 #define brk     asm volatile("sleep"); // break
 
-#define byte    unsigned char
-#define uint    unsigned int
-#define word    unsigned int
-#define ulong   unsigned long
-#define dword   unsigned long
+// Базовые типы данных
+#define byte        unsigned char
+#define uint        unsigned int
+#define word        unsigned int
+#define ulong       unsigned long
+#define dword       unsigned long
+
+// Объявление указателя на память (имя x, адрес a)
+#define heap(x, a)  byte* x = (byte*) a
+
+// Описания всех портов
+enum PortsID {
+
+    BANK_LO         = 0x00, // RW
+    BANK_HI         = 0x01, // RW
+
+    KB_DATA         = 0x02, // R
+    KB_HIT          = 0x03, // R
+
+    CURSOR_X        = 0x04, // RW
+    CURSOR_Y        = 0x05, // RW
+
+    TIMER_LO        = 0x06, // R
+    TIMER_HI        = 0x07, // R
+    
+    SPI_DATA        = 0x08, // W
+    SPI_CMD         = 0x09, // W
+    SPI_STATUS      = 0x09, // R
+
+    MOUSE_X_LO      = 0x0A, // R
+    MOUSE_Y_LO      = 0x0B, // R
+    MOUSE_STATUS    = 0x0C, // R
+    MOUSE_X_HI      = 0x0E, // R
+
+    VIDEOMODE       = 0x0D  // RW
+};
+
+// Список видеорежимов
+enum VideoModes {
+
+    VM_80x25        = 0,
+    VM_320x200x8    = 1,
+    VM_320x240x2    = 2,
+    VM_320x200x4    = 3
+};
 
 // Чтение из порта
-inline unsigned char inp(int port) { return ((volatile unsigned char*)0x20)[port]; }
+inline unsigned char inp(int port) {
+    return ((volatile unsigned char*)0x20)[port];
+}
 
 // Запись в порт
-inline void outp(int port, unsigned char val) { ((volatile unsigned char*)0x20)[port] = val; }
+inline void outp(int port, unsigned char val) {
+    ((volatile unsigned char*)0x20)[port] = val;
+}
 
 // Положение мыши
-inline int get_mouse_x() { return inp(0xA) | (inp(0xE) << 8); }
-inline int get_mouse_y() { return inp(0xB); }
-inline int get_mouse_st() { return inp(0xC); }
+inline int get_mouse_x()    { return inp(0xA) | (inp(0xE) << 8); }
+inline int get_mouse_y()    { return inp(0xB); }
+inline int get_mouse_st()   { return inp(0xC); }
 
-
+#endif
