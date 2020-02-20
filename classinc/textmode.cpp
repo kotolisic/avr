@@ -15,7 +15,11 @@ public:
     TextMode* start() {
 
         cursor_show = 1;
+
+        outp(BANK_LO,   0);
+        outp(BANK_HI,   0);
         outp(VIDEOMODE, VM_80x25);
+
         cursor(0, 0);
         return this;
     }

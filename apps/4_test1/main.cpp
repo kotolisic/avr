@@ -8,7 +8,7 @@ int main() {
     tm.cls(0x17);
 
     tm.frame(1,1,30,10,1);
-    tm.cursor(3,2)->color(0x1F)->printutf8("Привет Borland Pascaledron");    
+    tm.cursor(3,2)->color(0x1F)->printutf8("Надо сделать редактор");    
 
     dword tp = 0;
     for(;;) {
