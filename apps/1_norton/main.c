@@ -68,6 +68,8 @@ void redraw() {
     print("C:>");
 }
 
+#define defmem(R, B) unsigned char* R = (unsigned char*) B
+
 int main() {
 
     redraw();

@@ -22,6 +22,8 @@ module cpu
     // Положение курсора
     output reg  [ 7:0] cursor_x,
     output reg  [ 7:0] cursor_y,
+
+    // Мышь
     input  wire [ 8:0] mouse_x,
     input  wire [ 7:0] mouse_y,
     input  wire [ 1:0] mouse_cmd,
@@ -67,34 +69,57 @@ wire [7:0] _r4 = r[15];
 `define SPDEC 1
 `define SPINC 2
 
-// Проксирование памяти (регистры, порты)
-wire [ 7:0] din = address <= 16'h001F ? r[ address[4:0] ] :
-                  // Банки
-                  address == 16'h0020 ? bank :
-                  address == 16'h0021 ? 8'h00 :
-                  // Клавиатура
-                  address == 16'h0022 ? kb_ch :
-                  address == 16'h0023 ? {7'h0, kb_hit} :
-                  // Курсор
-                  address == 16'h0024 ? cursor_x :
-                  address == 16'h0025 ? cursor_y :
-                  // Таймер
-                  address == 16'h0026 ? timer_ms[ 7:0] :
-                  address == 16'h0027 ? timer_ms[15:8] :
-                  // SPI
-                  address == 16'h0028 ? spi_din :
-                  address == 16'h0029 ? spi_st :
-                  // Мышь
-                  address == 16'h002A ? mouse_x[7:0] :
-                  address == 16'h002B ? mouse_y[7:0] :
-                  address == 16'h002C ? {6'h0, mouse_cmd[1:0]} :
-                  address == 16'h002E ? {7'h0, mouse_x[8]} :
-                  // Процессор
-                  address == 16'h005B ? rampz :
-                  address == 16'h005D ? sp[ 7:0] :
-                  address == 16'h005E ? sp[15:8] :
-                  address == 16'h005F ? sreg :
-                                        din_raw;
+// ---------------------------------------------------------------------
+// Проксирование памяти DIN
+// ---------------------------------------------------------------------
+
+reg [7:0] din;
+
+always @* begin
+
+    casex (address)
+
+        // Регистры
+        16'b0000_0000_000x_xxxx: din = r[ address[4:0] ];
+        
+        // Банки
+        16'h0020: din = bank;
+        16'h0021: din = 8'h00;
+        
+        // Клавиатура
+        16'h0022: din = kb_ch;
+        16'h0023: din = {7'h0, kb_hit};
+        
+        // Курсор
+        16'h0024: din = cursor_x;
+        16'h0025: din = cursor_y;
+        
+        // Таймер
+        16'h0026: din = timer_ms[ 7:0];
+        16'h0027: din = timer_ms[15:8];
+        
+        // SPI
+        16'h0028: din = spi_din;
+        16'h0029: din = spi_st;
+        
+        // Мышь
+        16'h002A: din = mouse_x[7:0];
+        16'h002B: din = mouse_y[7:0];
+        16'h002C: din = {6'h0, mouse_cmd[1:0]};
+        16'h002E: din = {7'h0, mouse_x[8]};
+        
+        // Процессор
+        16'h005B: din = rampz;
+        16'h005D: din = sp[ 7:0];
+        16'h005E: din = sp[15:8];
+        16'h005F: din = sreg;
+
+        // Память
+        default:  din = din_raw;
+
+    endcase
+
+end
 
 // ---------------------------------------------------------------------
 // Регистры процессора, в том числе системные
@@ -858,23 +883,25 @@ always @(negedge clock) begin
             case (address)
 
                 // Системные регистры
-                16'h0020: bank     <= wb;
-                16'h0024: cursor_x <= wb;
-                16'h0025: cursor_y <= wb;
-                16'h0028: spi_out  <= wb;
-                16'h0029: begin // Запуск триггера активации команды SPI
+                16'h0020: bank     <= wb; // memory.bank (4kb) $F000
+                16'h0024: cursor_x <= wb; // text.cursor.x
+                16'h0025: cursor_y <= wb; // text.cursor.y
+                16'h0028: spi_out  <= wb; // spi.data
+
+                // Запуск триггера активации команды SPI
+                16'h0029: begin 
 
                     spi_cmd  <= wb[1:0];
                     spi_sent <= 1'b1;
                     locked   <= 1'b1;
 
                 end
-                16'h002D: vmode <= wb;
 
-                16'h005B: rampz    <= wb;
-                16'h005D: sp[ 7:0] <= wb;
-                16'h005E: sp[15:8] <= wb;
-                16'h005F: sreg     <= wb;
+                16'h002D: vmode     <= wb; // Видеорежим
+                16'h005B: rampz     <= wb; // Верхняя память ROM
+                16'h005D: sp[ 7:0]  <= wb; // SPL
+                16'h005E: sp[15:8]  <= wb; // SPH
+                16'h005F: sreg      <= wb; // SREG
 
                 // Запись в регистры как в память
                 default:
