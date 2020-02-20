@@ -2,14 +2,13 @@
 
 int main() {
 
-    TextMode canvas;
+    TextMode cv;
 
-    canvas.start();
-    canvas.cls(0x17);
-    canvas.cursor(78,24);
+    cv.start();
+    cv.cls(0x17);
 
-    canvas.print("Hello, Borland");
-    canvas.printfloat(1.5);
+    cv.frame(1,1,30,10,1);
+    cv.cursor(3,2)->print("Hello, Borland Pascaledron");
 
     for(;;);
 }

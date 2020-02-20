@@ -19,17 +19,19 @@ public:
     }
 
     // Установка текстового курсора в нужную позицию
-    void cursor(byte x, byte y) {
+    TextMode* cursor(byte x, byte y) {
 
         cursor_x = x;
         cursor_y = y;
 
         outp(CURSOR_X, x);
         outp(CURSOR_Y, y);
+
+        return this;
     }
 
     // Очистка экрана
-    void cls(byte cl) {
+    TextMode* cls(byte cl) {
 
         heap(vm, 0xF000);
 
@@ -40,25 +42,28 @@ public:
             vm[2*i+0] = 0;
             vm[2*i+1] = cl;
         }
+        return this;
     }
 
     // Текущий цвет
-    void color(unsigned char cl) {
+    TextMode* color(unsigned char cl) {
         cursor_cl = cl;
+        return this;
     }
 
-    // Печать символа не в телетайпе
-    void printc(byte x, byte y, char ch) {
+    // Печать символа на экране
+    TextMode* printc(byte x, byte y, char ch) {
 
         heap(vm, 0xF000);
         int   z = (x<<1) + (y<<7) + (y<<5);
 
         vm[z]   = ch;
         vm[z+1] = cursor_cl;
+        return this;
     }
 
     // Печать в режиме телетайпа
-    void printch(byte s) {
+    TextMode* printch(byte s) {
 
         int i;
         heap(vm, 0xF000);
@@ -93,28 +98,76 @@ public:
         }
 
         cursor(cursor_x, cursor_y);
+        return this;
     }
 
     // Печать строки
-    void print(const char* s) {
+    int print(const char* s) {
 
         int i = 0;
         while (s[i]) {
             printch(s[i++]);
         }
+        return i;
     }
 
     // Печать с переносом строки на новую
-    void println(const char *s) {
+    TextMode* println(const char *s) {
 
         print(s);
         printch(10);
+        return this;
     }
 
+    // Обновить палитру
+    TextMode* palette(byte id, byte r, byte g, byte b) {
+
+        heap(vm, 0xFFA0);
+        
+        vm[2*id + 0] = (b >> 4) | (g & 0xF0);
+        vm[2*id + 1] = (r >> 4);
+
+        return this;
+    }
+
+    // Рисовать фрейм
+    TextMode* frame(byte x1, byte y1, byte x2, byte y2, byte density) {
+
+        int i;
+        char v = density ? 0xBA : 0xB3;
+        char h = density ? 0xCD : 0xC4;
+
+        for (i = x1 + 1; i < x2; i++) { printc(i, y1, h); printc(i, y2, h); }
+        for (i = y1 + 1; i < y2; i++) { printc(x1, i, v); printc(x2, i, v); }
+
+        if (density) {
+
+            printc(x1, y1, 0xC9); printc(x2, y1, 0xBB);
+            printc(x1, y2, 0xC8); printc(x2, y2, 0xBC);
+
+        } else {
+
+            printc(x1, y1, 0xDA); printc(x2, y1, 0xBF);
+            printc(x1, y2, 0xC0); printc(x2, y2, 0xD9);
+        }
+        
+        return this;
+    }
+
+    // Рисование блока текста
+    TextMode* block(byte x1, byte y1, byte x2, byte y2, byte cl) {
+
+        cursor_cl = cl;
+        for (int i = y1; i <= y2; i++)
+        for (int j = x1; j <= x2; j++)
+            printc(j, i, ' ');
+
+        return this;
+    }
     // -----------------------------------------------------------------
 
     // Печать числа -2147483647 .. 2147483647
-    char printint(long v) {
+    byte printint(long v) {
 
         char s[16];
         int  q, i = 0, cnt = 0;
@@ -133,7 +186,7 @@ public:
     }
 
     // bits=1 (byte) =2 (word) =4 (dword)
-    void printhex(unsigned long v, char bytes) {
+    TextMode* printhex(unsigned long v, char bytes) {
 
         int sh = (bytes<<3) - 4;
         for (int i = 0; i < (bytes << 1); i++) {
@@ -141,10 +194,12 @@ public:
             unsigned char m = (v >> (sh - 4*i)) & 0x0F;
             printch(m < 10 ? '0' + m : '7' + m);
         }
+        
+        return this;
     }
 
     // Печать float, n=2
-    void printfloat(float x, char n) {
+    TextMode* printfloat(float x, char n) {
 
         if (x < 0) { x = -x; printch('-'); }
 
@@ -162,8 +217,10 @@ public:
             printch(f + '0');
             f = f - (int)f;
         }
+
+        return this;
     }
 
     // Печать 2-х знаков после запятой
-    void printfloat(float x) { printfloat(x, 2); }
+    TextMode* printfloat(float x) { return printfloat(x, 2); }
 };
