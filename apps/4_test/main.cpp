@@ -9,7 +9,6 @@ KB       kb;
 int main() {
 
     g.start();
-
     g.block(0,0,320,200,3);
 
     for(;;);

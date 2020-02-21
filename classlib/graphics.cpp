@@ -4,18 +4,19 @@ class Graphics {
 
 protected:
 
+    int region_x1, region_y1, region_x2, region_y2;
+
     // Вычисление адреса и банка
-    word _bank8(int x, int y) {
+    word bank8(int x, int y) {
 
         unsigned int z = (y << 7) + (y << 5) + (x >> 1);
         outp(BANK_LO, 8 | ((z >> 12) & 7));
         return z & 0xFFF;
     }
 
-    int region_x1, region_y1, region_x2, region_y2;
-
 public:
 
+    // Запустить видеорежим
     void start() {
 
         outp(BANK_LO,   0);
@@ -28,6 +29,7 @@ public:
         region_y2 = 199;
     }
 
+    // Установить точку
     void pset(int x, int y, byte cl) {
 
         heap(vm, 0xf000);
@@ -35,7 +37,7 @@ public:
         if (x < region_x1 || y < region_y1 || x > region_x2 || y > region_y2)
             return;
 
-        word z = _bank8(x, y);
+        word z = bank8(x, y);
 
         cl   &= 15;
         vm[z] = x & 1 ? ((vm[z] & 0xF0) | cl) : ((vm[z] & 0x0F) | (cl << 4));
@@ -46,7 +48,7 @@ public:
 
         heap(vm, 0xf000);
 
-        word z  = _bank8(x, y);
+        word z  = bank8(x, y);
         return x & 1 ? vm[z] & 0x0F : (vm[z] >> 4);
     }
 
@@ -56,9 +58,9 @@ public:
         heap(vm, 0xf000);
 
         // Расчет инициирующей точки
-        word  xc   = (x2>>1) - (x1>>1);     // Расстояние
-        word  cc   = cl | (cl << 4);        // Сдвоенный цвет
-        word  z    = _bank8(x1, y1);
+        word  xc = (x2>>1) - (x1>>1);     // Расстояние
+        word  cc = cl | (cl << 4);        // Сдвоенный цвет
+        word  z  = bank8(x1, y1);
         word  zc;
 
         // Коррекции, если не попадает
