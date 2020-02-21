@@ -1,7 +1,7 @@
 #include <avrio.c>
-#include "kbd.h"
+#include "kb.h"
 
-class KBD {
+class KB {
 
 protected:
 
@@ -9,10 +9,18 @@ protected:
 
 public:
 
-    KBD() {
+    KB() {
 
         key_shift = 0;
         key_spec  = 0;
+    }
+
+    byte hit() {
+        return inp(KB_HIT) & 1;
+    }
+
+    byte key() {
+        return inp(KB_DATA);
     }
 
     // Чтение из порта нового символа
