@@ -63,35 +63,60 @@ always @(posedge clock) begin
 end
 
 // ---------------------------------------------------------------------
+// Интерфейс SDRAM
+// ---------------------------------------------------------------------
+
+wire [31:0] sdram_address;
+wire [ 7:0] sdram_i_data;
+wire [ 7:0] sdram_o_data;
+wire [ 7:0] sdram_control;
+
+// ---------------------------------------------------------------------
 // Центральный процессорный блок
 // ---------------------------------------------------------------------
 
 cpu UnitAVRCPU
 (
-    clklo & locked,
-    pc, ir,
-    mem_id,
-    mem,
-    mem_wb,
-    mem_w,
-    bank,
-    vmode,
-    // KEYB
-    kb_ch,
-    kb_tr,
-    kb_hit,
-    // CURSOR
-    cursor_x,
-    cursor_y,
-    mouse_x,
-    mouse_y,
-    mouse_cmd,
+    .clock      (clklo & locked),
+
+    // Программная память
+    .pc         (pc),          // Программный счетчик
+    .ir         (ir),          // Инструкция из памяти
+
+    // Оперативная память
+    .address    (mem_id),     // Указатель на память RAM (sram)
+    .din_raw    (mem),     // memory[ address ]
+    .wb         (mem_wb),          // Запись в память по address
+    .w          (mem_w),           // Разрешение записи в память
+    .bank       (bank),        // Банк памяти
+    .vmode      (vmode),       // Видеорежим
+
+    // Ввод-вывод
+    .kb_ch      (kb_ch),       // Клавиатура
+    .kb_tr      (kb_tr),       // Триггер внешний
+    .kb_hit     (kb_hit),
+
+    // Положение курсора
+    .cursor_x   (cursor_x),
+    .cursor_y   (cursor_y),
+
+    // Мышь
+    .mouse_x    (mouse_x),
+    .mouse_y    (mouse_y),
+    .mouse_cmd  (mouse_cmd),
+
     // SPI
-    spi_sent,
-    spi_cmd,
-    spi_din,
-    spi_out,
-    spi_st
+    .spi_sent   (spi_sent),     // =1 Сообщение отослано на spi
+    .spi_cmd    (spi_cmd),     // Команда
+    .spi_din    (spi_din),     // Принятое сообщение
+    .spi_out    (spi_out),     // Сообщение на отправку
+    .spi_st     (spi_st),      // bit 1: timeout (1); bit 0: busy
+
+    // SDRAM
+    .sdram_address  (sdram_address),
+    .sdram_i_data   (sdram_i_data),
+    .sdram_o_data   (sdram_o_data),
+    .sdram_control  (sdram_control)    
 );
 
 // ---------------------------------------------------------------------

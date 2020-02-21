@@ -33,12 +33,22 @@ module cpu
     output reg  [ 1:0] spi_cmd,     // Команда
     input  wire [ 7:0] spi_din,     // Принятое сообщение
     output reg  [ 7:0] spi_out,     // Сообщение на отправку
-    input  wire [ 1:0] spi_st       // bit 1: timeout (1); bit 0: busy
+    input  wire [ 1:0] spi_st,      // bit 1: timeout (1); bit 0: busy
+
+    // SDRAM
+    output reg  [31:0] sdram_address,
+    output wire [ 7:0] sdram_i_data,
+    output reg  [ 7:0] sdram_o_data,
+    output reg  [ 7:0] sdram_control
 );
 
 initial begin
 
     pc = 0; address = 0; wb = 0; w = 0; vmode = 0;
+
+    sdram_address = 0;
+    sdram_control = 0;
+    sdram_o_data  = 0;
 
     cursor_x = 0;
     cursor_y = 0;
@@ -114,6 +124,14 @@ always @* begin
         16'h005D: din = sp[ 7:0];
         16'h005E: din = sp[15:8];
         16'h005F: din = sreg;
+
+        // SDRAM
+        16'h0030: din = sdram_address[ 7:0];
+        16'h0031: din = sdram_address[15:8];
+        16'h0032: din = sdram_address[23:16];
+        16'h0033: din = sdram_address[31:24];
+        16'h0034: din = sdram_i_data;
+        16'h0035: din = sdram_control;
 
         // Память
         default:  din = din_raw;
@@ -909,6 +927,15 @@ always @(negedge clock) begin
                 end
 
                 16'h002D: vmode     <= wb; // Видеорежим
+
+                // SDRAM
+                16'h0030: sdram_address[7 :0]  <= wb;
+                16'h0031: sdram_address[15:8]  <= wb;
+                16'h0032: sdram_address[23:16] <= wb;
+                16'h0033: sdram_address[31:24] <= wb;
+                16'h0034: sdram_o_data         <= wb;
+                16'h0035: sdram_control        <= wb;
+
                 16'h005B: rampz     <= wb; // Верхняя память ROM
                 16'h005D: sp[ 7:0]  <= wb; // SPL
                 16'h005E: sp[15:8]  <= wb; // SPH
