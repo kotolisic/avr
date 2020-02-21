@@ -911,7 +911,7 @@ always @(negedge clock) begin
 
             case (address)
 
-                // Системные регистры
+                // Управление памятью, курсором, SPI
                 16'h0020: bank     <= wb; // memory.bank (4kb) $F000
                 16'h0024: cursor_x <= wb; // text.cursor.x
                 16'h0025: cursor_y <= wb; // text.cursor.y
@@ -929,13 +929,14 @@ always @(negedge clock) begin
                 16'h002D: vmode     <= wb; // Видеорежим
 
                 // SDRAM
-                16'h0030: sdram_address[7 :0]  <= wb;
+                16'h0030: sdram_address[ 7:0]  <= wb;
                 16'h0031: sdram_address[15:8]  <= wb;
                 16'h0032: sdram_address[23:16] <= wb;
                 16'h0033: sdram_address[31:24] <= wb;
                 16'h0034: sdram_o_data         <= wb;
                 16'h0035: sdram_control        <= wb;
 
+                // Системные регистры
                 16'h005B: rampz     <= wb; // Верхняя память ROM
                 16'h005D: sp[ 7:0]  <= wb; // SPL
                 16'h005E: sp[15:8]  <= wb; // SPH
