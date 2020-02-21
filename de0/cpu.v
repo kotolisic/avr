@@ -209,8 +209,10 @@ always @(posedge clock) begin
         timer_divider <= timer_divider + 1;
 end
 
+// Обнаружение posedge kbhit для вызова прерывания
+
 // Исполнительное устройство
-always @(posedge clock)
+always @(posedge clock) begin
 if (!locked) begin
 
     w      <= 1'b0;
@@ -239,6 +241,12 @@ if (!locked) begin
         skip_instr <= 0;
 
     end
+
+    // Вызов прерывания
+    // else if (tstate == 0 && intr)
+    //  intr <= 0;
+    //  .. call
+
     // Исполнение опкодов
     else casex (opcode)
 
@@ -846,6 +854,7 @@ if (!locked) begin
 
     endcase
 
+end
 end
 
 // Запись в регистры
