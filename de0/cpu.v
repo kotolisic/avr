@@ -37,7 +37,7 @@ module cpu
 
     // SDRAM
     output reg  [31:0] sdram_address,
-    output wire [ 7:0] sdram_i_data,
+    input  wire [ 7:0] sdram_i_data,
     output reg  [ 7:0] sdram_o_data,
     input  wire [ 7:0] sdram_status,
     output reg  [ 7:0] sdram_control
@@ -72,8 +72,8 @@ initial begin
 
 end
 
-wire [7:0] _r1 = r[12];
-wire [7:0] _r2 = r[13];
+wire [7:0] _r1 = r[16];
+wire [7:0] _r2 = r[17];
 wire [7:0] _r3 = r[14];
 wire [7:0] _r4 = r[15];
 

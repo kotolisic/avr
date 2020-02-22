@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Sat Feb 22 16:31:48 2020
+[*] Sat Feb 22 18:50:34 2020
 [*]
 [dumpfile] "/disk/dev/avr/de0/avr.vcd"
-[dumpfile_mtime] "Sat Feb 22 16:29:41 2020"
-[dumpfile_size] 362531
+[dumpfile_mtime] "Sat Feb 22 18:50:05 2020"
+[dumpfile_size] 363195
 [savefile] "/disk/dev/avr/de0/avr.gtkw"
-[timestart] 567
+[timestart] 440
 [size] 1920 1029
 [pos] -1 -1
-*-5.000000 645 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-6.000000 715 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] avr.
 [sst_width] 248
 [signals_width] 247
 [sst_expanded] 1
-[sst_vpaned_height] 320
+[sst_vpaned_height] 323
 @28
 [color] 3
 avr.clock
@@ -37,13 +37,15 @@ avr.UnitAVRCPU.reg_ww
 avr.UnitAVRCPU.reg_id[4:0]
 @28
 avr.UnitAVRCPU.reg_idw[1:0]
-@c00200
+@800200
 -DEBUG
 @22
 [color] 6
 avr.UnitAVRCPU._r1[7:0]
+@23
 [color] 6
 avr.UnitAVRCPU._r2[7:0]
+@22
 [color] 6
 avr.UnitAVRCPU._r3[7:0]
 [color] 7
@@ -58,7 +60,7 @@ avr.UnitAVRCPU.Z[15:0]
 avr.UnitAVRCPU.rd[4:0]
 [color] 7
 avr.UnitAVRCPU.rr[4:0]
-@1401200
+@1000200
 -DEBUG
 @c00200
 -ALU
@@ -159,13 +161,13 @@ avr.UnitAVRCPU.sdram_status[7:0]
 @28
 [color] 3
 avr.dram_clk
-@29
 [color] 2
 avr.UnitSDRAM.chipinit
-@28
 [color] 2
 avr.UnitSDRAM.o_ready
 @22
+avr.UnitSDRAM.cursor[3:0]
+avr.UnitSDRAM.o_data[7:0]
 avr.dram_addr[12:0]
 @28
 avr.dram_ba[1:0]

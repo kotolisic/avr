@@ -192,7 +192,7 @@ if (~chipinit) begin
                 dram_ldqm   <= 1'b1;
 
                 if (rw_request == request_read)
-                    o_data <= w_address[0] ? dram_dq[15:8] : dram_dq[7:0];
+                    o_data <= (w_address[0] ? dram_dq[15:8] : dram_dq[7:0]);
 
             end
 

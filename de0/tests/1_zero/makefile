@@ -7,5 +7,5 @@ all:
 	avr-objdump -S avr.elf > avr.lst
 	rm avr.elf avr.o
 	cd ../.. && make
-	./../../../av2/avr avr.bin
+	./../../../av/avr avr.bin
 

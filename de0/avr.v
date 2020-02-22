@@ -163,7 +163,7 @@ wire        dram_ras;
 wire        dram_we;
 wire        dram_ldqm;
 wire        dram_udqm;
-wire [15:0] dram_dq;
+wire [15:0] dram_dq  = dram_we ? 16'hAAFF : 16'hZZZZ;
 
 sdram UnitSDRAM
 (
