@@ -65,6 +65,9 @@ APP::APP(int w, int h, const char* caption) {
     spi_resp = 0xFF;
     mouse_cmd = 0;
     spi_st = 2; // Timeout SD
+
+    sdram_data = (unsigned char*)malloc(64*1024*1024);
+    for (int i = 0; i < 64*1024*1024; i++) sdram_data[i] = 0x55 ^ i;
 }
 
 // Загрузка файла в память

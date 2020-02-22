@@ -70,6 +70,7 @@ wire [31:0] sdram_address;
 wire [ 7:0] sdram_i_data;
 wire [ 7:0] sdram_o_data;
 wire [ 7:0] sdram_control;
+wire [ 7:0] sdram_status = {7'h0, o_ready};
 
 // ---------------------------------------------------------------------
 // Центральный процессорный блок
@@ -116,12 +117,14 @@ cpu UnitAVRCPU
     .sdram_address  (sdram_address),
     .sdram_i_data   (sdram_i_data),
     .sdram_o_data   (sdram_o_data),
-    .sdram_control  (sdram_control)    
+    .sdram_status   (sdram_status),     // bit 0: Ready
+    .sdram_control  (sdram_control)     // bit 0: WE
 );
 
 // ---------------------------------------------------------------------
 // SPI
 // ---------------------------------------------------------------------
+
 wire spi_cs;
 wire spi_sclk;
 wire spi_miso = 1'b1;
@@ -130,7 +133,7 @@ wire spi_mosi;
 spi UnitSPI(
 
     clk50,
-    
+
     // SPI
     spi_cs,
     spi_sclk,
@@ -143,6 +146,48 @@ spi UnitSPI(
     spi_din,
     spi_out,
     spi_st
+);
+
+// ---------------------------------------------------------------------
+// SDRAM
+// ---------------------------------------------------------------------
+
+wire        o_ready;
+
+// Эмулируемый icarus
+wire        dram_clk;
+wire [ 1:0] dram_ba;
+wire [12:0] dram_addr;
+wire        dram_cas;
+wire        dram_ras;
+wire        dram_we;
+wire        dram_ldqm;
+wire        dram_udqm;
+wire [15:0] dram_dq;
+
+sdram UnitSDRAM
+(
+    // Тактовая частота 100 МГц (SDRAM)
+    .clock_100_mhz  (clock),
+    .clock_25_mhz   (clklo),
+
+    // Управление
+    .i_address      (sdram_address[25:0]),  // 64 МБ памяти
+    .i_we           (sdram_control[0]),     // Признак записи в память
+    .i_data         (sdram_o_data),         // Данные для записи (8 бит)
+    .o_data         (sdram_i_data),         // Прочитанные данные
+    .o_ready        (o_ready),              // Готовность данных (=1 Готово)
+
+    // Физический интерфейс DRAM
+    .dram_clk       (dram_clk),       // Тактовая частота памяти
+    .dram_ba        (dram_ba),        // 4 банка
+    .dram_addr      (dram_addr),      // Максимальный адрес 2^13=8192
+    .dram_dq        (dram_dq),        // Ввод-вывод
+    .dram_cas       (dram_cas),       // CAS
+    .dram_ras       (dram_ras),       // RAS
+    .dram_we        (dram_we),        // WE
+    .dram_ldqm      (dram_ldqm),      // Маска для младшего байта
+    .dram_udqm      (dram_udqm)       // Маска для старшего байта
 );
 
 endmodule

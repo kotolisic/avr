@@ -1,5 +1,5 @@
 all:
-	iverilog -g2005-sv -DICARUS=1 avr.v cpu.v alu.v spi.v -o main.qqq
+	iverilog -g2005-sv -DICARUS=1 avr.v cpu.v alu.v spi.v sdram.v -o main.qqq
 	vvp main.qqq >> /dev/null
 
 wave:

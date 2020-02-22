@@ -1,20 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Sat Dec 21 07:43:53 2019
+[*] Sat Feb 22 16:31:48 2020
 [*]
-[dumpfile] "/disk/dev/avrmachine/de0/avr.vcd"
-[dumpfile_mtime] "Sat Dec 21 07:42:52 2019"
-[dumpfile_size] 81306
-[savefile] "/disk/dev/avrmachine/de0/avr.gtkw"
-[timestart] 0
+[dumpfile] "/disk/dev/avr/de0/avr.vcd"
+[dumpfile_mtime] "Sat Feb 22 16:29:41 2020"
+[dumpfile_size] 362531
+[savefile] "/disk/dev/avr/de0/avr.gtkw"
+[timestart] 567
 [size] 1920 1029
 [pos] -1 -1
-*-7.000000 111 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-5.000000 645 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] avr.
 [sst_width] 248
-[signals_width] 200
+[signals_width] 247
 [sst_expanded] 1
-[sst_vpaned_height] 317
+[sst_vpaned_height] 320
 @28
 [color] 3
 avr.clock
@@ -79,7 +79,7 @@ avr.UnitAVRCPU.op2[7:0]
 avr.UnitAVRCPU.op1w[15:0]
 @1401200
 -ALU
-@800200
+@c00200
 -MemCTRL
 @22
 [color] 5
@@ -97,9 +97,9 @@ avr.UnitAVRCPU.wb[7:0]
 @28
 [color] 5
 avr.UnitAVRCPU.w
-@1000200
+@1401200
 -MemCTRL
-@800200
+@c00200
 -SPI
 @28
 [color] 6
@@ -116,10 +116,8 @@ avr.UnitAVRCPU.spi_out[7:0]
 @28
 [color] 3
 avr.UnitAVRCPU.spi_sent
-@29
 [color] 3
 avr.UnitAVRCPU.spi_proc
-@28
 [color] 6
 avr.UnitAVRCPU.spi_st[1:0]
 @22
@@ -144,6 +142,45 @@ avr.UnitSPI.spi_mosi
 avr.UnitSPI.spi_miso
 @1000200
 -SPIExt
+@1401200
 -SPI
+@800200
+-SDRAM:AVR
+@22
+avr.UnitAVRCPU.sdram_address[31:0]
+avr.UnitAVRCPU.sdram_control[7:0]
+avr.UnitAVRCPU.sdram_i_data[7:0]
+avr.UnitAVRCPU.sdram_o_data[7:0]
+avr.UnitAVRCPU.sdram_status[7:0]
+@1000200
+-SDRAM:AVR
+@800200
+-DRAM
+@28
+[color] 3
+avr.dram_clk
+@29
+[color] 2
+avr.UnitSDRAM.chipinit
+@28
+[color] 2
+avr.UnitSDRAM.o_ready
+@22
+avr.dram_addr[12:0]
+@28
+avr.dram_ba[1:0]
+avr.dram_cas
+@22
+avr.dram_dq[15:0]
+@28
+avr.dram_ldqm
+avr.dram_ras
+avr.dram_udqm
+avr.dram_we
+avr.UnitSDRAM.rw_request[1:0]
+@22
+avr.UnitSDRAM.w_address[25:0]
+@1000200
+-DRAM
 [pattern_trace] 1
 [pattern_trace] 0

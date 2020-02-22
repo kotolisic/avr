@@ -104,6 +104,10 @@ protected:
     int             map[65536];
     unsigned short  opcode, command;
 
+    // SDRAM
+    unsigned int    sdram_addr;
+    unsigned char*  sdram_data;
+
     int  pc;
     int  cpu_halt;
     int  require_halt;

@@ -65,6 +65,10 @@ module de0(
 // MISO: Input Port
 assign SD_DATA[0] = 1'bZ;
 
+// SDRAM Enable
+assign DRAM_CKE  = 1; // ChipEnable
+assign DRAM_CS_N = 0; // ChipSelect
+
 // Z-state
 assign DRAM_DQ = 16'hzzzz;
 assign GPIO_0  = 36'hzzzzzzzz;
@@ -78,7 +82,8 @@ assign HEX3 = 7'b1111111;
 assign HEX4 = 7'b1111111;
 assign HEX5 = 7'b1111111;
 
-pll u0(
+pll u0
+(
     .clkin (CLOCK_50),
     .m25   (clk25),
     .m12   (clk12),
@@ -125,7 +130,7 @@ vga UnitVGATextDisplay
     .gm_data    (gm_data)
 );
 
-// Знакогенератор
+// Знакогенератор 4k
 fontrom UnitFontRom
 (
     // Чтение из памяти
@@ -246,7 +251,14 @@ cpu UnitAVRCPU
     .spi_cmd    (spi_cmd),
     .spi_din    (spi_din),
     .spi_out    (spi_out),
-    .spi_st     (spi_st)
+    .spi_st     (spi_st),
+
+    // SDRAM
+    .sdram_address  (sdram_address),
+    .sdram_i_data   (sdram_i_data),
+    .sdram_o_data   (sdram_o_data),
+    .sdram_status   (sdram_status),     // bit 0: Ready
+    .sdram_control  (sdram_control)     // bit 0: WE    
 );
 
 // ---------------------------------------------------------------------
@@ -371,6 +383,41 @@ always @(posedge clk50) begin
 
 end
 
+// ---------------------------------------------------------------------
+// SDRAM
+// ---------------------------------------------------------------------
+
+wire [31:0] sdram_address;
+wire [ 7:0] sdram_i_data;
+wire [ 7:0] sdram_o_data;
+wire [ 7:0] sdram_control;
+wire [ 7:0] sdram_status = {7'h0, o_ready};
+wire        o_ready;
+
+sdram UnitSDRAM
+(
+    // Тактовая частота 100 МГц (SDRAM)
+    .clock_100_mhz  (clk),
+    .clock_25_mhz   (clk25),
+
+    // Управление
+    .i_address      (sdram_address[25:0]),  // 64 МБ памяти
+    .i_we           (sdram_control[0]),     // Признак записи в память
+    .i_data         (sdram_o_data),         // Данные для записи (8 бит)
+    .o_data         (sdram_i_data),         // Прочитанные данные
+    .o_ready        (o_ready),              // Готовность данных (=1 Готово)
+
+    // Физический интерфейс DRAM
+    .dram_clk       (DRAM_CLK),       // Тактовая частота памяти
+    .dram_ba        (DRAM_BA),        // 4 банка
+    .dram_addr      (DRAM_ADDR),      // Максимальный адрес 2^13=8192
+    .dram_dq        (DRAM_DQ),        // Ввод-вывод
+    .dram_cas       (DRAM_CAS_N),     // CAS
+    .dram_ras       (DRAM_RAS_N),     // RAS
+    .dram_we        (DRAM_WE_N),      // WE
+    .dram_ldqm      (DRAM_LDQM),      // Маска для младшего байта
+    .dram_udqm      (DRAM_UDQM)       // Маска для старшего байта
+);
 
 
 endmodule

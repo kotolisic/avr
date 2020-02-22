@@ -38,7 +38,15 @@ enum PortsID {
     MOUSE_STATUS    = 0x0C, // R
     MOUSE_X_HI      = 0x0E, // R
 
-    VIDEOMODE       = 0x0D  // RW
+    VIDEOMODE       = 0x0D, // RW
+
+    // Управление SDRAM
+    SDRAM_B0        = 0x10, //  7:0
+    SDRAM_B1        = 0x11, // 15:8
+    SDRAM_B2        = 0x12, // 23:16
+    SDRAM_B3        = 0x13, // 31:24
+    SDRAM_DATA      = 0x14, // RW
+    SDRAM_CTRL      = 0x15, // R  Status [0=Ready], W Control [0=WE]
 };
 
 // Список видеорежимов

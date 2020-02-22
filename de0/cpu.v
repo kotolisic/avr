@@ -39,6 +39,7 @@ module cpu
     output reg  [31:0] sdram_address,
     output wire [ 7:0] sdram_i_data,
     output reg  [ 7:0] sdram_o_data,
+    input  wire [ 7:0] sdram_status,
     output reg  [ 7:0] sdram_control
 );
 
@@ -131,7 +132,7 @@ always @* begin
         16'h0032: din = sdram_address[23:16];
         16'h0033: din = sdram_address[31:24];
         16'h0034: din = sdram_i_data;
-        16'h0035: din = sdram_control;
+        16'h0035: din = sdram_status;
 
         // Память
         default:  din = din_raw;
