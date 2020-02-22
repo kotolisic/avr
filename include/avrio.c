@@ -12,9 +12,6 @@
 #define ulong       unsigned long
 #define dword       unsigned long
 
-// Объявление указателя на память (имя x, адрес a)
-#define heap(x, a)  byte* x = (byte*) a
-
 // Описания всех портов
 enum PortsID {
 
@@ -94,5 +91,9 @@ inline void SPI_put(byte data) {
     outp(SPI_DATA, data);
     outp(SPI_CMD,  SPI_CMD_SEND);
 }
+
+// Объявление указателя на память (имя x, адрес a)
+#define heap(x, a)  byte* x = (byte*) a
+#define bank(x)     outp(BANK_LO, x)
 
 #endif
