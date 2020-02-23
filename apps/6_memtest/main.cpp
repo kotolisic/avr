@@ -26,9 +26,11 @@ int main() {
     dword ptime = TIMERD; // pad = 0;
 
     int x = 0, y = 0;
-    dword max = 64; // 64
+
+    dword cnt = 0;
+    dword max = 64;
     
-    for (dword i = 0; i < (dword)max*1024*1024; i++) { // 64
+    for (dword i = 0; i < (dword)max*1024*1024; i++) {
 
         dram.write(i, i);
 
@@ -37,9 +39,9 @@ int main() {
             t.printc(x, y, '#');
 
             // Скорость записи в память
-            t.cursor(0, 24)->printfloat( (float)i / ((float)(TIMERD - ptime) / 1000.0) / 1024.0 );
+            t.cursor(0, 24)->printfloat( i / ((float)(TIMERD - ptime) / 1000.0) / 1024.0 );
             t.print(" kbs    ");
-
+            
             t.printint((TIMERD - ptime)/1000);
             t.print(" s.   ");
 
@@ -47,8 +49,7 @@ int main() {
         }
     }
 
-    y = 0; x = 0;
-    word cnt = 0;
+    cnt = 0; y = 0; x = 0;
     for (dword i = 0; i < (dword)max*1024*1024; i++) { // 64
 
         byte dv = dram.read(i);
