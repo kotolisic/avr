@@ -26,7 +26,9 @@ int main() {
     dword ptime = TIMERD; // pad = 0;
 
     int x = 0, y = 0;
-    for (dword i = 0; i < (dword)64*1024*1024; i++) {
+    dword max = 64; // 64
+    
+    for (dword i = 0; i < (dword)max*1024*1024; i++) { // 64
 
         dram.write(i, i);
 
@@ -38,10 +40,41 @@ int main() {
             t.cursor(0, 24)->printfloat( (float)i / ((float)(TIMERD - ptime) / 1000.0) / 1024.0 );
             t.print(" kbs    ");
 
+            t.printint((TIMERD - ptime)/1000);
+            t.print(" s.   ");
+
             x++; if (x == 80) { x = 0; y++; }
         }
     }
 
+    y = 0; x = 0;
+    word cnt = 0;
+    for (dword i = 0; i < (dword)max*1024*1024; i++) { // 64
+
+        byte dv = dram.read(i);
+
+        // Тест ошибки
+        if (dv != (i & 255)) {
+            cnt++;
+        }
+
+        // Проверка на ошибки
+        if ((i & 0xffff) == 0) {
+
+            if (cnt > 0) {
+
+                if (cnt < 10) cnt = '0' + cnt;
+                else if (cnt >= 10) cnt = '!';
+                
+                t.color(0xCF)->printc(x, y, cnt);
+            } else {
+                t.color(0x0A)->printc(x, y, '#');
+            }
+            
+            x++; if (x == 80) { x = 0; y++; }
+            cnt = 0;
+        }
+    }
 
     // Для начала скопировать программу bios в 64кб памяти
     // Запустить энтот биос

@@ -43,10 +43,10 @@ localparam cmd_nop          = 3'b111;
 // Режимы работы машины состояний
 localparam state_idle      = 0;
 localparam state_rw        = 1;
+localparam state_precharge = 2;
 
-localparam request_none    = 0;
-localparam request_write   = 1;
-localparam request_read    = 2;
+// Перезарядка (2 раза в сек пока что)
+localparam precharge_timeout = 50000000;
 
 `ifdef ICARUS
 localparam init_time = 0;
@@ -82,13 +82,14 @@ reg  [14:0]     icounter        = 0;
 reg  [2:0]      command         = cmd_nop;
 reg  [2:0]      command_init    = cmd_nop;
 reg  [12:0]     dram_init       = 12'b1_00000_00000;
-reg  [ 3:0]     current_state   = state_idle;
+reg  [ 1:0]     current_state   = state_idle;
 reg  [12:0]     address         = 0;
 reg  [24:0]     current_addr    = 0;
 reg  [ 3:0]     cursor          = 0;
 reg  [25:0]     w_address       = 0;
 reg             w_request       = 0;
 reg             first_enabled   = 1;
+reg  [25:0]     precharge_time  = 0;
 
 // Инициализация чипа памяти
 // Параметры: BurstFull, Sequential, CASLatency=2
@@ -122,13 +123,22 @@ if (~chipinit) begin
         // -----------------------------------------
         state_idle: begin
 
-            // PRECHARGE ROW
+            // Время ожидания для строк вышло
+            if (precharge_time > precharge_timeout) begin
+
+                o_ready        <= 1'b0;
+                precharge_time <= 0;
+                cursor         <= 0;
+                current_state  <= state_precharge;
+                current_addr   <= 0;
+
+            end
 
             // 1. Обнаружено изменение адреса
             // 2. Первое включение памяти
             // 3. Обнаружена запись, данные поменялись
             // ---------------------------------------------------------
-            if (first_enabled || i_address != w_address || (i_we && o_data != i_data)) begin
+            else if (first_enabled || i_address != w_address || (i_we && o_data != i_data)) begin
 
                 o_ready       <= 1'b0;
                 first_enabled <= 1'b0;
@@ -160,10 +170,18 @@ if (~chipinit) begin
                 // Адрес потребуется для чтения или записи
                 if (i_we) o_data <= i_data;
 
+                // Учитывать это время для перезарядки
+                precharge_time <= precharge_time + 10;
+
             end
 
             // Готовность
-            else begin o_ready <= 1'b1; end
+            else begin
+
+                o_ready        <= 1'b1;
+                precharge_time <= precharge_time + 1;
+
+            end
 
         end
 
@@ -186,7 +204,7 @@ if (~chipinit) begin
             // Для записи слова требуется BURST Terminate
             3: if (w_request)
             begin cursor <= 6; command <= cmd_burst_term;  end
-            else  cursor <= 4; 
+            else  cursor <= 4;
 
             // Для корректного чтения требуется 3 такта, чтобы успел сигнал
             4, 5: cursor <= cursor + 1;
@@ -213,6 +231,48 @@ if (~chipinit) begin
                 current_state <= state_idle;
 
             end
+
+        endcase
+
+        // Перезарядка всех банков
+        state_precharge: case (cursor)
+
+            // Активация
+            0: begin
+
+                command <= cmd_activate;
+                address <= current_addr[12:0];
+                dram_ba <= current_addr[14:13]; 
+                cursor  <= 1;
+
+            end
+
+            // Ожидание Activate
+            1, 2: begin cursor <= cursor + 1; command <= cmd_nop; end
+
+            // Перезарядка
+            3: begin
+
+                cursor      <= cursor + 1;
+                command     <= cmd_precharge;
+                address[10] <= 1'b1;
+
+            end
+
+            // Ожидание
+            4: begin
+
+                cursor  <= 0;
+                command <= cmd_nop;
+
+                // Выход из цикла перезаряда
+                if (current_addr[14:0] == 15'h7FFF)
+                    current_state <= state_idle;
+
+                current_addr[14:0] <= current_addr[14:0] + 1;
+
+            end
+
 
         endcase
 
