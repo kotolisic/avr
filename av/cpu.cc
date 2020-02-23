@@ -89,6 +89,14 @@ void APP::put(int addr, unsigned char value) {
     if (addr == 0x31) sdram_addr = (sdram_addr & 0xFFFF00FF) | (value << 8); 
     if (addr == 0x32) sdram_addr = (sdram_addr & 0xFF00FFFF) | (value << 16);
     if (addr == 0x33) sdram_addr = (sdram_addr & 0x00FFFFFF) | (value << 24);
+    if (addr == 0x34) sdram_data_byte = value;
+    if (addr == 0x35) {
+
+        if (value & 1)
+            sdram_data[sdram_addr & 0x3ffffff] = sdram_data_byte;
+
+        sdram_ctl = value;
+    }
 
     // Нарисовать на холсте
     if (addr >= 0xC000) { update_byte_scr(addr); }

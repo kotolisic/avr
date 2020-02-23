@@ -1,7 +1,9 @@
 #include <textmode.cpp>
 #include <kb.cpp>
+#include <dram.cpp>
 
 KB kb;
+DRAM dram;
 TextMode t;
 
 /*
@@ -21,27 +23,13 @@ int main() {
     //brk;
     byte dv;
 
-    outp(SDRAM_B0, 0);
-    outp(SDRAM_B1, 0);
-    outp(SDRAM_B2, 0);
-    outp(SDRAM_B3, 0);
-    while (!(inp(SDRAM_CTRL) & 1));
-
     for (int i = 0; i < 256; i++) {
-
-        outp(SDRAM_DATA, i);
-        outp(SDRAM_B0, i);
-        outp(SDRAM_CTRL, 1);
-        while (!(inp(SDRAM_CTRL) & 1));
-        outp(SDRAM_CTRL, 0);
+        dram.write(i, i);
     }
 
     for (int i = 0; i < 256; i++) {
 
-        outp(SDRAM_B0, i);
-        while (!(inp(SDRAM_CTRL) & 1)); // Ждать ответа ready=1
-
-        dv = inp(SDRAM_DATA);
+        dv = dram.read(i);
         t.printhex(dv, 1);
         t.printch(' ');
     }

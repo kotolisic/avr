@@ -1,5 +1,6 @@
 /*
  * Модуль памяти 64Мб для DE0-CV
+ * Реальная частота работы чтения-записи без конвейера 2.5 Мгц
  */
 
 module sdram
@@ -86,7 +87,7 @@ reg  [12:0]     address         = 0;
 reg  [24:0]     current_addr    = 0;
 reg  [ 3:0]     cursor          = 0;
 reg  [25:0]     w_address       = 0;
-reg  [ 1:0]     rw_request      = 0;
+reg             w_request       = 0;
 reg             first_enabled   = 1;
 
 // Инициализация чипа памяти
@@ -134,17 +135,27 @@ if (~chipinit) begin
                 cursor        <= 0;
 
                 // Запись адреса и типа запроса
+                w_request     <= i_we;
                 w_address     <= i_address;
                 current_addr  <= i_address[25:1];
                 current_state <= state_rw;
-                rw_request    <= i_we ? request_write : request_read;
 
                 // Активация строки
                 command       <= cmd_activate;
                 address       <= i_address[23:11];
                 dram_ba       <= i_address[25:24];
-                dram_udqm     <= ~i_address[0]; // bit=1, значит, HIGH
-                dram_ldqm     <=  i_address[0]; // bit=0, значит, LOW
+
+                if (i_we) begin
+
+                    dram_udqm <= ~i_address[0]; // bit=1, значит, HIGH
+                    dram_ldqm <=  i_address[0]; // bit=0, значит, LOW
+
+                end else begin
+
+                    dram_udqm <= 1'b0;
+                    dram_ldqm <= 1'b0;
+
+                end
 
                 // Адрес потребуется для чтения или записи
                 if (i_we) o_data <= i_data;
@@ -156,7 +167,7 @@ if (~chipinit) begin
 
         end
 
-        // Запись в память
+        // Запись/Чтение, 10 тактов
         // -----------------------------------------
         state_rw: case (cursor)
 
@@ -167,40 +178,39 @@ if (~chipinit) begin
             2: begin
 
                 cursor  <= 3;
-                command <= rw_request == request_write ? cmd_write : cmd_read;
+                command <= w_request ? cmd_write : cmd_read;
                 address <= {1'b1, current_addr[9:0]};
 
             end
 
-            // При записи использовать NOP
-            3, 4: begin
+            // Для корректного чтения требуется 3 такта, чтобы успел сигнал
+            // Для записи требуется NOP
+            3, 4, 5: begin
 
-                if (rw_request == request_write) command <= cmd_nop;
-                // else address[9:0] <= address[9:0] + 1;
-
+                if (w_request) command <= cmd_nop;
                 cursor <= cursor + 1;
 
             end
 
             // Перезарядка банка, закрытие строки
-            5: begin
+            6: begin
 
-                cursor      <= 6;
+                cursor      <= 7;
                 command     <= cmd_precharge;
                 address[10] <= 1'b1;
-                dram_udqm   <= 1'b1;
-                dram_ldqm   <= 1'b1;
 
-                if (rw_request == request_read)
+                if (w_request == 1'b0)
                     o_data <= (w_address[0] ? dram_dq[15:8] : dram_dq[7:0]);
 
             end
 
             // Переход к IDLE
-            6: begin
+            7: begin
 
                 cursor        <= 0;
                 command       <= cmd_nop;
+                dram_udqm     <= 1'b1;
+                dram_ldqm     <= 1'b1;
                 current_state <= state_idle;
 
             end

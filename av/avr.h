@@ -104,9 +104,11 @@ protected:
     int             map[65536];
     unsigned short  opcode, command;
 
-    // SDRAM
+    // SDRAM Контроллер
     unsigned int    sdram_addr;
     unsigned char*  sdram_data;
+    unsigned char   sdram_ctl;
+    unsigned char   sdram_data_byte;
 
     int  pc;
     int  cpu_halt;
@@ -144,6 +146,7 @@ protected:
 public:
 
     APP(int, int, const char*);
+    ~APP();
 
     // Приложение
     void infinite();

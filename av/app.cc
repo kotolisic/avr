@@ -70,6 +70,10 @@ APP::APP(int w, int h, const char* caption) {
     for (int i = 0; i < 64*1024*1024; i++) sdram_data[i] = 0x55 ^ i;
 }
 
+APP::~APP() {
+    free(sdram_data);
+}
+
 // Загрузка файла в память
 void APP::loadfile(const char* fn) {
 
