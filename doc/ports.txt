@@ -100,6 +100,7 @@ SDRAM
     $12     address[23:16]
     $13     address[31:24]
     $14 RW  data[7:0]
-    $15 R   bit[0]: Готовность памяти
-        W   bit[0]: Запись байта в память
+    $15 R   bit[1]: Готовность памяти
+            bit[0]: Write Enable
+        W   bit[0]: Write Enable
 

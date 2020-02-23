@@ -66,6 +66,12 @@ enum SPI_Commands {
     SPI_CMD_CE1     = 3
 };
 
+enum SDRAM_Status {
+
+    SDRAM_WE        = 1,
+    SDRAM_READY     = 2
+};
+
 // Значение таймера [15:0] или [31:0]
 #define TIMERW ((word) inp(TIMER_LO) + ((word) inp(TIMER_HI)<<8))
 #define TIMERD ((dword)inp(TIMER_LO) + ((dword)inp(TIMER_HI)<<8) + ((dword)inp(TIMER_HI2)<<16))

@@ -110,7 +110,7 @@ void APP::config() {
         count_per_frame = (clock_mhz * 1000000) / clock_video;
 
         fclose(fp);
-    }    
+    }
 
     SDL_AddTimer(1000 / clock_video, AVRDisplayTimer, NULL);
 }

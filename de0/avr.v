@@ -70,7 +70,7 @@ wire [31:0] sdram_address;
 wire [ 7:0] sdram_i_data;
 wire [ 7:0] sdram_o_data;
 wire [ 7:0] sdram_control;
-wire [ 7:0] sdram_status = {7'h0, o_ready};
+wire [ 7:0] sdram_status = {6'h0, o_ready, sdram_control[0]};
 
 // ---------------------------------------------------------------------
 // Центральный процессорный блок

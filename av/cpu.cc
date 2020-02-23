@@ -49,7 +49,7 @@ unsigned char APP::get(int addr) {
         case 0x32: return (sdram_addr >> 16) & 0xff;
         case 0x33: return (sdram_addr >> 24) & 0xff;
         case 0x34: return sdram_data[sdram_addr & 0x3ffffff]; // data
-        case 0x35: return 0b00000001; // ready=1
+        case 0x35: return 0b00000010 | (sdram_ctl & 1); // ready=1, we=?
 
         // Остальная память
         default:   dv = sram[addr]; break;
