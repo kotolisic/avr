@@ -167,14 +167,14 @@ if (~chipinit) begin
 
         end
 
-        // Запись/Чтение, 10 тактов
+        // 7 Запись, 10 Чтение (такты)
         // -----------------------------------------
         state_rw: case (cursor)
 
             // Ожидание активации строки
             0, 1: begin command <= cmd_nop; cursor <= cursor + 1; end
 
-            // Запись/Чтение
+            // Запись или чтение
             2: begin
 
                 cursor  <= 3;
@@ -183,14 +183,13 @@ if (~chipinit) begin
 
             end
 
+            // Для записи слова требуется BURST Terminate
+            3: if (w_request)
+            begin cursor <= 6; command <= cmd_burst_term;  end
+            else  cursor <= 4; 
+
             // Для корректного чтения требуется 3 такта, чтобы успел сигнал
-            // Для записи требуется NOP
-            3, 4, 5: begin
-
-                if (w_request) command <= cmd_nop;
-                cursor <= cursor + 1;
-
-            end
+            4, 5: cursor <= cursor + 1;
 
             // Перезарядка банка, закрытие строки
             6: begin
