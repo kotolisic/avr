@@ -28,7 +28,7 @@ public:
         outp(SDRAM_B2, address >> 16);
         outp(SDRAM_B3, address >> 24);
 
-        outp(SDRAM_DATA, data);        
+        outp(SDRAM_DATA, data);
         outp(SDRAM_CTRL, inp(SDRAM_CTRL) | SDRAM_WE); // WE=1
 
         // Ожидать завершения записи

@@ -1,28 +1,14 @@
 #include <textmode.cpp>
-#include <kb.cpp>
 #include <dram.cpp>
 
-KB kb;
 DRAM dram;
 TextMode t;
-
-/*
- * Карта памяти
- * $0000 IVT
- * $0400 BDA
- * $7C00 Загрузчик
- *
- * Биос будет эмулироваться, честно говоря, пока что
- */
-dword ff(dword c) {
-    return TIMERD - c;
-}
 
 // Простое заполнение данными и проверка скорости
 void mem_unit1() {
 
     dword ptime = TIMERD;
-    
+
     int x = 0, y = 0;
     dword cnt = 0;
     dword max = 64;
@@ -39,7 +25,7 @@ void mem_unit1() {
             // Скорость записи в память
             t.cursor(0, 24)->printfloat((1000.0 / 1024.0) * i / (float)(TIMERD - ptime));
             t.print(" kbs    ");
-            
+
             t.printint((TIMERD - ptime)/1000);
             t.print(" s.   ");
 
@@ -65,12 +51,12 @@ void mem_unit1() {
 
                 if (cnt < 10) cnt = '0' + cnt;
                 else if (cnt >= 10) cnt = '!';
-                
+
                 t.color(0xCF)->printc(x, y, cnt);
             } else {
                 t.color(0x0A)->printc(x, y, '#');
             }
-            
+
             x++; if (x == 80) { x = 0; y++; }
             cnt = 0;
         }
@@ -84,7 +70,7 @@ void mem_unit2() {
 
     dword ptime = TIMERD;
 
-    for (dword p = 0; p < (dword)64*1024*4; p++) {    
+    for (dword p = 0; p < (dword)64*1024*4; p++) {
 
         dram.write_page(p, page);
 
@@ -92,7 +78,7 @@ void mem_unit2() {
 
              t.cursor(0, 24)->printfloat((256000.0 / 1024.0) * p / (float)(TIMERD - ptime));
              t.print(" kbs    ");
-             
+
              t.printint((TIMERD - ptime)/1000);
              t.print(" s.   ");
         }
@@ -106,6 +92,6 @@ int main() {
     t.cls(0x07)->hide();
 
     mem_unit2();
-    
+
     for(;;);
 }

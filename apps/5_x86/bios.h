@@ -1,0 +1,3 @@
+static const byte BIOSROM[] = {
+    0x00, 0x00, 0x00
+};
