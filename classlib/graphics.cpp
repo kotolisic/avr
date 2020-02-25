@@ -1,4 +1,5 @@
 #include <avrio.c>
+#include "format.cpp"
 
 class Graphics {
 
@@ -7,6 +8,7 @@ protected:
     int  region_x1, region_y1, region_x2, region_y2;
     int  cursor_x, cursor_y;
     byte cursor_cl;
+    Format form;
 
     // Вычисление адреса и банка
     word bank8(int x, int y) {
@@ -206,6 +208,12 @@ public:
         return this;
     }
 
+    // Выбор цвета
+    Graphics* color(byte cl) {
+        cursor_cl = cl;
+        return this;
+    }
+
     // Печать в режиме телетайпа
     Graphics* printch(byte cl) {
 
@@ -221,8 +229,12 @@ public:
         return this;
     }
 
-    // Печать строки
+    // Печать строки (utf8)
     int print(const char* s) {
-        int i = 0; while (s[i]) printch(s[i++]); return i;
+
+        form.utf8_to_cp866(s);
+        byte* b = form.get_buffer();
+        
+        int i = 0; while (b[i]) printch(b[i++]); return i;
     }
 };

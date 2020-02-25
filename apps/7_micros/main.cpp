@@ -10,12 +10,11 @@ TextMode t;
 Graphics g;
 // ---------------------------------------------------------------------
 
+#include "appmenu.cpp"
+
+AppMenu appmenu;
+
 int main() {
 
-    g.start();
-    g.cursor(8, 8)->print("Menu Entertainment");
-    g.cursor(8, 32)->print("> Norton Commander");
-
-    
-
+    appmenu.selector();
 }
