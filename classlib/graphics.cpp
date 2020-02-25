@@ -197,6 +197,15 @@ public:
         return this;
     }
 
+    // Установка курсора
+    Graphics* cursor(int x, int y) {
+
+        cursor_x = x;
+        cursor_y = y;
+
+        return this;
+    }
+
     // Печать в режиме телетайпа
     Graphics* printch(byte cl) {
 

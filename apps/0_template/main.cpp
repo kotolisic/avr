@@ -1,7 +1,16 @@
-#include <avrio.c>
-#include <textmode.c>
+#include <textmode.cpp>
+#include <graphics.cpp>
+#include <kb.cpp>
+#include <dram.cpp>
+
+KB       kb;
+DRAM     dram;
+TextMode t;
+Graphics g;
 
 int main() {
 
-    cls(0x17);
+    t.start();
+    t.cls(0x17);
+
 }

@@ -23,7 +23,8 @@ int main() {
 
     t.start();
     t.cls(0x07)->hide();
-brk;
+
+
     cpu.step();
 
     for(;;);

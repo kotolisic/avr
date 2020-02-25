@@ -112,20 +112,24 @@ vga UnitVGATextDisplay
     .CLK25  (clk25),
     .vmode  (vmode),
 
+    // Физический интерфейс
     .VGA_R  (VGA_R),
     .VGA_G  (VGA_G),
     .VGA_B  (VGA_B),
     .VGA_HS (VGA_HS),
     .VGA_VS (VGA_VS),
 
+    // Адреса таблиц шрифтов
     .font_addr  (font_addr),
     .font_data  (font_data),
     .char_addr  (char_addr),
     .char_data  (char_data),
 
+    // Указатель курсора
     .cursor_x   (cursor_x),
     .cursor_y   (cursor_y),
 
+    // Графический режим 320x200x4
     .gm_address (gm_address),
     .gm_data    (gm_data)
 );
@@ -198,7 +202,7 @@ sram UnitSRAM
     .q_b        (char_data)
 );
 
-// Расширенная память 64K
+// Расширенная память 64K [и видеоадаптер 640x400x2, 320x200x8]
 extram UnitExtendRAM64
 (
     .clock      (clk),
@@ -206,6 +210,10 @@ extram UnitExtendRAM64
     .q_a        (din_extram),
     .data_a     (wb),
     .wren_a     (w & w_extram),
+
+    // Для видеоадаптера
+    // .address_b(),
+    // .q_b      ()
 );
 
 // Память видеоадаптера, графический 32к
@@ -258,10 +266,9 @@ cpu UnitAVRCPU
     .sdram_i_data   (sdram_i_data),
     .sdram_o_data   (sdram_o_data),
     .sdram_status   (sdram_status),     // bit 0: Ready
-    .sdram_control  (sdram_control)     // bit 0: WE    
+    .sdram_control  (sdram_control)     // bit 0: WE
 );
 
-// ---------------------------------------------------------------------
 // Контроллер клавиатуры PS/2
 // ---------------------------------------------------------------------
 
@@ -327,7 +334,6 @@ always @(posedge clk50) begin
 
 end
 
-// ---------------------------------------------------------------------
 // Контроллер SPI
 // ---------------------------------------------------------------------
 
@@ -418,6 +424,5 @@ sdram UnitSDRAM
     .dram_ldqm      (DRAM_LDQM),      // Маска для младшего байта
     .dram_udqm      (DRAM_UDQM)       // Маска для старшего байта
 );
-
 
 endmodule

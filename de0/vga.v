@@ -18,7 +18,6 @@ module vga(
 
     output  reg  [11:0] font_addr,  // 2^12 = 4096 байт
     input   wire [7:0]  font_data,  // полученные данные от знакогенератора
-
     output  reg  [11:0] char_addr, // Указатель в видеопамять
     input   wire [7:0]  char_data, // Значение из видеопамяти
 
