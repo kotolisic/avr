@@ -24,8 +24,8 @@ public:
     void badge(int s) {
 
         // Специальная обводка
-        g.line(219, 3,  220 + 16*6, 3, 0);
-        g.line(219, 20, 220 + 16*6, 20, 0);
+        g.line(220, 3,  220 + 16*6, 3, 0);
+        g.line(220, 20, 220 + 16*6, 20, 0);
 
         // Фирменный значок
         for (char i = 0; i < 16; i++) {
@@ -62,7 +62,7 @@ public:
         badge(badge_offset);
 
         // Вывести все меню
-        for (int i = 0; i < 8; i++) draw_menu_element(i, cursor == i ? 15 : 7);
+        for (int i = 0; i < 8; i++) draw_menu_element(i, cursor == i ? 10 : 7);
 
         for (;;) {
 
@@ -75,7 +75,7 @@ public:
                 if (keyb == VK_DOWN || keyb == VK_UP) {
 
                     draw_menu_element(selected, 7);
-                    selected = (keyb == VK_DOWN ? selected + 1 :  selected - 1);
+                    selected = (keyb == VK_DOWN ? selected + 1 : selected - 1);
 
                     // Перемотка
                     if (selected < 0)
@@ -83,7 +83,7 @@ public:
                     else if (selected > APPMENU_MAX)
                         selected = 0;
 
-                    draw_menu_element(selected, 15);
+                    draw_menu_element(selected, 10);
                 }
             }
 
