@@ -51,25 +51,29 @@ public:
         return cnt;
     }
 
-/*
     // Печать числа -2147483647 .. 2147483647
     byte i2a(long v) {
 
         char s[24];
-        int  q, i = 0, cnt = 0;
+        int  q, i = 0, cnt = 0, cs = 0;
 
         // Печать символа минус перед числом
-        if (v < 0) { v = -v; printch('-'); cnt = 1; }
+        if (v < 0) { v = -v; buffer[cs++] = '-'; cnt = 1; }
 
         // Вычисление смещения
         do { q = v % 10; v /= 10; s[i++] = '0' + q; } while (v); i--;
 
         // Вывести число
-        for (char k = 0; k <= i; k++) { printch(s[i-k]); cnt++; }
+        for (char k = 0; k <= i; k++) { buffer[cs++] = s[i-k]; cnt++; }
+
+        // В конце ZTerm
+        buffer[cs] = 0;
 
         // Занимаемый размер символов
         return cnt;
     }
+    
+/*
 
     // bits=1 (byte) =2 (word) =4 (dword)
     void hex(unsigned long v, char bytes) {

@@ -198,7 +198,14 @@ public:
         return this;
     }
 
-    // printint
+    TextMode* printint(long v) {
+
+        form.i2a(v);
+        print((const char*) form.get_buffer());
+
+        return this;
+    }
+    
     // printfloat 1
     // printfloat 2
     // printhex

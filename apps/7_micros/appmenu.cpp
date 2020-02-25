@@ -1,5 +1,11 @@
 #define APPMENU_MAX     7
 
+enum MenuItems {
+
+    MENU_CALENDAR   = 3
+
+};
+
 static const char* appmenu_list[] = {
 
     /* 0 */ "Нортон",
@@ -85,17 +91,22 @@ public:
 
                     draw_menu_element(selected, 10);
                 }
+                // Включить программу
+                else if (keyb == VK_ENTER) {
+                    break;
+                }
+
             }
 
             // Оживить бейдж
             if (ctimer - ptimer > 100) {
 
-                ptimer = ctimer;
                 badge(badge_offset);
-                badge_offset += 1;
+                badge_offset++;
+                ptimer = ctimer;
             }
         }
 
-        return 0;
+        return selected;
     }
 };

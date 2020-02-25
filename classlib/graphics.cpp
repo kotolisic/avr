@@ -234,7 +234,28 @@ public:
 
         form.utf8_to_cp866(s);
         byte* b = form.get_buffer();
-        
+
         int i = 0; while (b[i]) printch(b[i++]); return i;
+    }
+
+    // Формы и окна
+    // -----------------------------------------------------------------
+
+    // Рисование окна
+    Graphics* window(int x, int y, int w, int h, const char* s) {
+
+        int x2 = x + w, y2 = y + h;
+
+        block(x, y, x2, y2, 7);
+        line(x2, y, x2, y2, 8);
+        line(x, y2, x2, y2, 8);
+        line(x, y, x2, y, 15);
+        line(x, y, x, y2, 15);
+        block(x+2,y+2,x2-2,y+18,3);
+
+        cursor(x+4,y+2)->color(15);
+        print(s);
+
+        return this;
     }
 };
