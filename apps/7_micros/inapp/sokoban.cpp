@@ -82,18 +82,17 @@ public:
                 player_y += movey;
                 steps++;
             }
-
         }
     }
 
     void you_win() {
 
-        for (int i = 0; i < 200; i++) 
+        for (int i = 0; i < 200; i++)
         for (int j = i&1; j < 320; j += 2)
             g.pset(j, i, 0);
-        
 
-        g.wiped(0)->window(50, 50, 200, 40, "Вы прошли уровень");        
+
+        g.wiped(0)->window(50, 50, 200, 40, "Вы прошли уровень");
         g.cursor(54, 70)->color(0)->print("Перейти к следующему...");
         kb.getch();
     }

@@ -22,8 +22,6 @@ AppSokoban  sokoban;
 
 int main() {
 
-    sokoban.main();
-
     for (;;) {
 
         byte program_id = appmenu.selector();
