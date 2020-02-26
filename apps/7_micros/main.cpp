@@ -25,7 +25,7 @@ int main() {
     sokoban.main();
 
     for (;;) {
-        
+
         byte program_id = appmenu.selector();
 
         switch (program_id) {

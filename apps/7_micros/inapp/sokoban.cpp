@@ -12,13 +12,90 @@ public:
     void main() {
 
         g.start();
+
         byte lvl[240];
+        byte ch, ob;
+        char movex, movey, moved;
 
         load_level(0, lvl);
         draw_level(lvl);
 
-        kb.getch();
+        for (;;) {
+
+            movex = 0;
+            movey = 0;
+            moved = 0;
+
+            // Нарисовать игрока
+            sprite(player_x, player_y, SOKOBAN_PLAYER);
+            ch = kb.getch();
+            update_player(lvl);
+
+            if      (ch == VK_UP)    { movex =  0; movey = -1; }
+            else if (ch == VK_DOWN)  { movex =  0; movey =  1; }
+            else if (ch == VK_LEFT)  { movex = -1; movey =  0; }
+            else if (ch == VK_RIGHT) { movex =  1; movey =  0; }
+
+            // Зарегистрировано перещение
+            if (movex || movey) {
+
+                // Проверка, куда перемещается
+                ob = get_obj_hi(player_x + movex, player_y + movey, lvl);
+
+                if (ob == SOKOBAN_BRICK) {
+                    // Загораживает стена
+                }
+                else if (ob == SOKOBAN_BOX) {
+
+                    ob = get_obj_hi(player_x + 2*movex, player_y + 2*movey, lvl);
+
+                    if (ob == SOKOBAN_BOX || ob == SOKOBAN_BRICK) {
+                        // За ящиком стена или ящик
+                    }
+                    else {
+
+                        moved = 1;
+
+                        // Очистить коробку на прежнем месте и передвинуть
+                        lvl[20*(player_y + 1*movey) + (player_x + 1*movex)] &= 0xF0;
+                        lvl[20*(player_y + 2*movey) + (player_x + 2*movex)] |= SOKOBAN_BOX;
+
+                        update_sprite(player_x + 1*movex, player_y + 1*movey, lvl);
+                        update_sprite(player_x + 2*movex, player_y + 2*movey, lvl);
+                    }
+                }
+                else moved = 1;
+            }
+
+            // Перемещение доступно
+            if (moved) {
+                player_x += movex;
+                player_y += movey;
+            }
+
+        }
     }
+
+    // Объект, который стоит на уровне игрока
+    byte get_obj_hi(int x, int y, byte lvl[]) {
+        return lvl[20*y + x] & 0x0F;
+    }
+
+    // Обновить спрайт
+    void update_sprite(int x, int y, byte lvl[]) {
+
+        byte hi = lvl[20*y + x] >> 4;
+        byte lo = lvl[20*y + x] & 0x0F;
+
+        // Гарисовать Place, если нет ничего (например ящика)
+        if (lo == 0 && hi == SOKOBAN_PLACE)
+            sprite(x, y, hi);
+        else
+            sprite(x, y, lo);
+    }
+
+    // Чтобы поменьше писать
+    void update_player(byte lvl[]) { update_sprite(player_x, player_y, lvl); }
 
     // Загрузка уровня в память
     void load_level(int level_id, byte store[]) {
@@ -29,23 +106,24 @@ public:
 
                 byte vb = sokoban_level[level_id][ (j>>2) + (i*5) ];
                 byte sp = (vb >> (6 - 2*(j & 3))) & 3;
-                store[20*i + j] = sp;
+                
+                store[20*i + j] = (sp == SOKOBAN_PLACE) ? (SOKOBAN_PLACE << 4) : sp;
             }
         }
 
+        // Записать позицию игрока
         player_x = sokoban_level[level_id][60];
         player_y = sokoban_level[level_id][61];
-
-        store[player_y*20 + player_x] = SOKOBAN_PLAYER;
     }
 
     // Нарисовать уровень и загрузить его в память
     void draw_level(byte level[]) { // byte lvl
 
         g.cls(0);
-        for (int i = 0; i < 12; i++) 
-        for (int j = 0; j < 20; j++)
-            sprite(j, i, level[20*i + j]);        
+        for (int i = 0; i < 12; i++)
+        for (int j = 0; j < 20; j++) {
+            update_sprite(j, i, level);
+        }
     }
 
     // Нарисовать некоторый спрайт
@@ -57,6 +135,12 @@ public:
         y *= 16;
 
         switch (id) {
+
+            // Пустота
+            case 0:
+
+                g.block(x, y, x+15, y+15, 0);
+                break;
 
             // Кирпичи
             case SOKOBAN_BRICK:
@@ -74,7 +158,7 @@ public:
             case SOKOBAN_WOOD:
             case SOKOBAN_PLACE:
 
-                g.block(x, y, x+15, y+15, 6);
+                g.block(x, y, x+15, y+15, 4);
                 for (i = 0; i < 16; i += 4) {
                     g.line(x,y+i,x+15,y+i,0);
                 }
@@ -89,9 +173,8 @@ public:
                 g.pset(x+12,y+6,0);
                 g.pset(x+12,y+14,0);
 
-                // Это место для установки
-                if (id == SOKOBAN_PLACE)
-                    g.circle(x+8,y+8,5,15);
+                // Это место для парковки
+                if (id == SOKOBAN_PLACE) g.circle(x+8,y+8,3,7);
 
                 break;
 
@@ -109,12 +192,12 @@ public:
 
             case SOKOBAN_PLAYER:
 
-                g.circle(x + 8, y + 3, 2, 15);
-                g.line(x + 8, y + 6, x + 8, y + 10, 15);
-                g.line(x + 8, y + 10, x + 5, y + 15, 15);
-                g.line(x + 8, y + 10, x + 11, y + 15, 15);
-                g.line(x + 8, y + 5, x + 4, y + 9, 15);
-                g.line(x + 8, y + 5, x + 12, y + 9, 15);
+                g.circle(x + 8, y + 3, 2, 7);
+                g.line(x + 8, y + 6, x + 8, y + 10, 7);
+                g.line(x + 8, y + 10, x + 5, y + 15, 7);
+                g.line(x + 8, y + 10, x + 11, y + 15, 7);
+                g.line(x + 8, y + 5, x + 4, y + 9, 7);
+                g.line(x + 8, y + 5, x + 12, y + 9, 7);
 
                 break;
         }
