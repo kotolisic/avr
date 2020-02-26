@@ -37,7 +37,7 @@ protected:
 
     int  region_x1, region_y1, region_x2, region_y2;
     int  cursor_x, cursor_y;
-    byte cursor_cl;
+    byte cursor_cl, wipe_under;
     Format form;
 
     // Вычисление адреса и банка
@@ -65,6 +65,7 @@ public:
         cursor_x  = 0;
         cursor_y  = 0;
         cursor_cl = 15;
+        wipe_under = 0;
 
         return this;
     }
@@ -74,7 +75,7 @@ public:
 
         block(0, 0, 319, 199, cl);
         return this;
-    }
+    }    
 
     // Установить точку
     Graphics* pset(int x, int y, byte cl) {
@@ -237,6 +238,9 @@ public:
             for (int j = 0; j < 8; j++) {
                 if (fn & t[j & 7])
                     pset(x + j, y + i, cl);
+                else if (wipe_under & 0x10) {
+                    pset(x + j, y + i, wipe_under & 15);
+                }
             }
         }
 
@@ -257,6 +261,14 @@ public:
         cursor_cl = cl;
         return this;
     }
+
+    // Очищать ли background и в какой цвет (младший ниббл)
+    Graphics* wiped(byte w) {
+
+        wipe_under = w;
+        return this;
+    }
+    
 
     // Печать в режиме телетайпа
     Graphics* printch(byte cl) {

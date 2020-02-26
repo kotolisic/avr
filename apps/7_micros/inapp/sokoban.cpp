@@ -5,7 +5,9 @@ class AppSokoban {
 
 protected:
 
-    int player_x, player_y;
+    int  player_x, player_y;
+    byte freecnt;
+    int  steps;
 
 public:
 
@@ -13,11 +15,12 @@ public:
 
         g.start();
 
+        byte current_level = 0;
         byte lvl[240];
         byte ch, ob;
         char movex, movey, moved;
 
-        load_level(0, lvl);
+        load_level(current_level, lvl);
         draw_level(lvl);
 
         for (;;) {
@@ -27,7 +30,12 @@ public:
             moved = 0;
 
             // Нарисовать игрока
+            show_stat(lvl);
             sprite(player_x, player_y, SOKOBAN_PLAYER);
+
+            // Победа
+            if (freecnt == 0) { you_win(); break; }
+
             ch = kb.getch();
             update_player(lvl);
 
@@ -69,11 +77,56 @@ public:
 
             // Перемещение доступно
             if (moved) {
+
                 player_x += movex;
                 player_y += movey;
+                steps++;
             }
 
         }
+    }
+
+    void you_win() {
+
+        for (int i = 0; i < 200; i++) 
+        for (int j = i&1; j < 320; j += 2)
+            g.pset(j, i, 0);
+        
+
+        g.wiped(0)->window(50, 50, 200, 40, "Вы прошли уровень");        
+        g.cursor(54, 70)->color(0)->print("Перейти к следующему...");
+        kb.getch();
+    }
+
+    // Кол-во остатков
+    byte count_free(byte lvl[]) {
+
+        byte cnt = 0;
+
+        for (int i = 0; i < 12; i++)
+        for (int j = 0; j < 20; j++) {
+
+            byte hi = lvl[20*i + j] >> 4;
+            byte lo = lvl[20*i + j] & 0x0F;
+
+            if (hi == SOKOBAN_PLACE && lo != SOKOBAN_BOX)
+                cnt++;
+        }
+
+        return cnt;
+    }
+
+    // Показать статистику
+    void show_stat(byte lvl[]) {
+
+        freecnt = count_free(lvl);
+
+        g.cursor(0, 0)->color(15)->wiped(0x10);
+        g.print("Ящиков: ");
+        g.printint(freecnt);
+        g.print("  Ход: ");
+        g.printint(steps);
+        g.print("   ");
     }
 
     // Объект, который стоит на уровне игрока
@@ -100,13 +153,15 @@ public:
     // Загрузка уровня в память
     void load_level(int level_id, byte store[]) {
 
+        steps = 0;
+
         for (int i = 0; i < 12; i++) {
 
             for (int j = 0; j < 20; j++) {
 
                 byte vb = sokoban_level[level_id][ (j>>2) + (i*5) ];
                 byte sp = (vb >> (6 - 2*(j & 3))) & 3;
-                
+
                 store[20*i + j] = (sp == SOKOBAN_PLACE) ? (SOKOBAN_PLACE << 4) : sp;
             }
         }
