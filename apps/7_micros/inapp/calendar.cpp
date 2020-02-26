@@ -20,7 +20,7 @@ public:
 
     void main() {
 
-        t.start()->hide();
+        t.start()->hide()->cls(0x07);
 
         year = 2020;
 

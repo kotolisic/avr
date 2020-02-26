@@ -202,7 +202,6 @@ public:
 
         form.i2a(v);
         print((const char*) form.get_buffer());
-
         return this;
     }
     

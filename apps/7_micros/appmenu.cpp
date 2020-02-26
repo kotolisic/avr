@@ -2,7 +2,8 @@
 
 enum MenuItems {
 
-    MENU_CALENDAR   = 3
+    MENU_CALENDAR   = 3,
+    MENU_SOKOBAN    = 6
 
 };
 
@@ -48,7 +49,9 @@ public:
     // Рисуется один элемент меню
     void draw_menu_element(byte id, byte cl) {
 
-        g.cursor(8, 32 + 16*id)->color(cl)->print(appmenu_list[id]);
+        g.cursor(8, 32 + 16*id);
+        g.color(cl);
+        g.print(appmenu_list[id]);
     }
 
     // Основное меню
@@ -61,8 +64,8 @@ public:
         selected = 0;
 
         g.start();
-        g.block(0,0,320,200,1);
-        g.block(0,0,320,24,7);
+        g.block(0,0,319,199,1);
+        g.block(0,0,319,24,7);
         g.cursor(8, 4)->color(0)->print("Выбор приложения");
 
         badge(badge_offset);

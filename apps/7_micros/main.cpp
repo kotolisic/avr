@@ -1,3 +1,5 @@
+// #include <avr/pgmspace.h>
+
 // ---------------------------------------------------------------------
 #include <textmode.cpp>
 #include <graphics.cpp>
@@ -11,12 +13,16 @@ Graphics g;
 // ---------------------------------------------------------------------
 
 #include "inapp/calendar.cpp"
+#include "inapp/sokoban.cpp"
 #include "appmenu.cpp"
 
-AppMenu appmenu;
+AppMenu     appmenu;
 AppCalendar calendar;
+AppSokoban  sokoban;
 
 int main() {
+
+    sokoban.main();
 
     for (;;) {
         
@@ -24,17 +30,15 @@ int main() {
 
         switch (program_id) {
 
-            case MENU_CALENDAR:
+            case MENU_SOKOBAN: sokoban.main(); break;
+            case MENU_CALENDAR: calendar.main(); break;
 
-                calendar.main();
-                break;
-            
             default:
-            
+
                 g.window(40, 50, 240, 50, "Ошибка!");
                 g.cursor(44, 75)->color(0)->print("Программа пока не реализована");
                 kb.getch();
-                break;  
+                break;
         }
     }
 }

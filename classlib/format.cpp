@@ -72,7 +72,7 @@ public:
         // Занимаемый размер символов
         return cnt;
     }
-    
+
 /*
 
     // bits=1 (byte) =2 (word) =4 (dword)
